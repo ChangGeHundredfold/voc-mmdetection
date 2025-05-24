@@ -1,0 +1,2 @@
+work_dirs/yolov3_d53_8xb8-ms-608-273e_voc_base/epoch_100.pth filter=lfs diff=lfs merge=lfs -text
+work_dirs/faster-rcnn_r50_fpn_1x_voc/epoch_10.pth filter=lfs diff=lfs merge=lfs -text
