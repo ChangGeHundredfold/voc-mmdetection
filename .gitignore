@@ -1,0 +1,30 @@
+mm_venv
+data
+.ipynb_checkpoints
+work_dirs/faster-rcnn_r50_fpn_1x_voc/*
+work_dirs/yolov3_d53_8xb8-ms-608-273e_voc_base/*
+tools/analysis_tools
+tools/dataset_converters
+tools/model_converters
+tools/deployment
+tools/misc/*
+tools/*.sh
+!tools/train.py
+!tools/test.py
+!tools/misc/download_dataset.py
+
+!work_dirs/faster-rcnn_r50_fpn_1x_voc/faster-rcnn_r50_fpn_1x_voc.py
+!work_dirs/faster-rcnn_r50_fpn_1x_voc/last_checkpoint
+!work_dirs/faster-rcnn_r50_fpn_1x_voc/epoch_10.pth
+# frcnn train log
+!work_dirs/faster-rcnn_r50_fpn_1x_voc/20240529_125217
+# frcnn test log
+!work_dirs/faster-rcnn_r50_fpn_1x_voc/20240529_190915
+
+!work_dirs/yolov3_d53_8xb8-ms-608-273e_voc_base/yolov3_d53_8xb8-ms-608-273e_voc_base.py
+!work_dirs/yolov3_d53_8xb8-ms-608-273e_voc_base/last_checkpoint
+!work_dirs/yolov3_d53_8xb8-ms-608-273e_voc_base/epoch_100.pth
+# frcnn train log
+!work_dirs/yolov3_d53_8xb8-ms-608-273e_voc_base/20240530_195334
+# frcnn test log
+!work_dirs/yolov3_d53_8xb8-ms-608-273e_voc_base/20240531_205942

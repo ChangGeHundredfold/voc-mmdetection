@@ -1,0 +1,1 @@
+python tools/test.py configs/faster_rcnn/faster-rcnn_r50_fpn_1x_voc.py ./work_dirs/faster-rcnn_r50_fpn_1x_voc/epoch_10.pth
