@@ -1,13 +1,16 @@
-_base_ = [
-    '../_base_/datasets/voc0712.py',  # 替换为 VOC 数据集配置
-    '../_base_/schedules/schedule_1x.py',
-    '../_base_/default_runtime.py'
-]
-
 num_stages = 6
 num_proposals = 100
-num_classes = 20  # VOC 有 20 个类别
-
+# 在配置文件的任意位置（通常在末尾）添加
+default_hooks = dict(
+    logger=dict(
+        type='LoggerHook',
+        interval=50,  # 每50个iter记录一次
+        hooks=[
+            dict(type='TextLoggerHook'),
+            dict(type='TensorboardLoggerHook')
+        ]
+    )
+)
 model = dict(
     type='SparseRCNN',
     data_preprocessor=dict(
@@ -50,7 +53,7 @@ model = dict(
         bbox_head=[
             dict(
                 type='DIIHead',
-                num_classes=num_classes,  # 设置为 VOC 的 20 类
+                num_classes=20,  # Change this to 20 for VOC
                 num_ffn_fcs=2,
                 num_heads=8,
                 num_cls_fcs=1,
@@ -81,6 +84,7 @@ model = dict(
                     target_means=[0., 0., 0., 0.],
                     target_stds=[0.5, 0.5, 1., 1.])) for _ in range(num_stages)
         ]),
+    # training and testing settings
     train_cfg=dict(
         rpn=None,
         rcnn=[
@@ -95,12 +99,63 @@ model = dict(
                 sampler=dict(type='PseudoSampler'),
                 pos_weight=1) for _ in range(num_stages)
         ]),
-    test_cfg=dict(rpn=None, rcnn=dict(max_per_img=num_proposals))
-)
+    test_cfg=dict(rpn=None, rcnn=dict(max_per_img=num_proposals)))
 
 # optimizer
 optim_wrapper = dict(
     optimizer=dict(
-        _delete_=True, type='AdamW', lr=0.00005, weight_decay=0.0001),  # VOC数据集较小，可适当增大学习率
-    clip_grad=dict(max_norm=1, norm_type=2)
-)
+        _delete_=True, type='AdamW', lr=0.000025, weight_decay=0.0001),
+    clip_grad=dict(max_norm=1, norm_type=2))
+
+# Dataset
+dataset_type = 'VOCDataset' # Change this
+data_root = 'data/VOCdevkit/' # And this
+classes = ('aeroplane', 'bicycle', 'bird', 'boat', 'bottle', 'bus', 'car',
+            'cat', 'chair', 'cow', 'diningtable', 'dog', 'horse',
+            'motorcycle', 'person', 'pottedplant', 'sheep', 'sofa', 'train',
+            'tvmonitor')
+train_pipeline = [
+    dict(type='LoadImageFromFile'),
+    dict(type='LoadAnnotations', with_bbox=True),
+    dict(type='Resize', scale=(1000, 600), keep_ratio=True),
+    dict(type='RandomFlip', flip_ratio=0.5),
+    dict(type='Normalize', mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], to_rgb=True),
+    dict(type='Pad', size_divisor=32),
+    dict(type='DefaultFormatBundle'),
+    dict(type='Collect', keys=['img', 'gt_bboxes', 'gt_labels'])
+]
+test_pipeline = [
+    dict(type='LoadImageFromFile'),
+    dict(type='Resize', scale=(1000, 600), keep_ratio=True),
+    dict(type='Normalize', mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], to_rgb=True),
+    dict(type='Pad', size_divisor=32),
+    dict(type='DefaultFormatBundle'),
+    dict(type='Collect', keys=['img'])
+]
+data = dict(
+    samples_per_gpu=2,
+    workers_per_gpu=2,
+    train=dict(
+        type=dataset_type,
+        data_root=data_root,
+        ann_file=data_root + 'VOC2007/ImageSets/Main/trainval.txt', # Change this
+        img_prefix=data_root + 'VOC2007/',  # And this
+        classes=classes,
+        pipeline=train_pipeline),
+    val=dict(
+        type=dataset_type,
+        data_root=data_root,
+        ann_file=data_root + 'VOC2007/ImageSets/Main/test.txt', # Change this
+        img_prefix=data_root + 'VOC2007/', # And this
+        classes=classes,
+        pipeline=test_pipeline),
+    test=dict(
+        type=dataset_type,
+        data_root=data_root,
+        ann_file=data_root + 'VOC2007/ImageSets/Main/test.txt', # And this
+        img_prefix=data_root + 'VOC2007/', # And this
+        classes=classes,
+        pipeline=test_pipeline))
+
+# evaluation
+evaluation = dict(interval=1, metric='mAP')
