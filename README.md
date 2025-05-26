@@ -110,11 +110,11 @@ Use the following commands to test the trained models:
 
 Mask R-CNN
 ```bash
-python tools/test.py configs/faster_rcnn/faster-rcnn_r50_fpn_1x_voc.py work_dirs/faster-rcnn_r50_fpn_1x_voc/epoch_10.pth
+python tools/test.py configs/mask-rcnn_r50_fpn_1x_voc.py --resume [checkpoint.pth]
 ```
 Sparse R-CNN
 ```bash
-python tools/test.py configs/yolo/yolov3_d53_8xb8-ms-608-273e_voc_base.py work_dirs/yolov3_d53_8xb8-ms-608-273e_voc_base/epoch_100.pth
+python tools/test.py configs/sparse_rcnn/sparse-rcnn_r50_fpn_1x_voc.py --resume [checkpoint.pth]
 ```
 ## 🧠 Model Inference
 Run inference on a custom image:
@@ -129,7 +129,7 @@ python inference.py
 
 You can download the pretrained Mask R-CNN weights from Baidu NetDisk:
 
-- **Link**: [https://pan.baidu.com/s/1canbZ35cyiCUD3mD-a1KtA?pwd=fsqn](https://pan.baidu.com/s/1canbZ35cyiCUD3mD-a1KtA?pwd=fsqn)
+- [Mask R-CNN](https://pan.baidu.com/s/1canbZ35cyiCUD3mD-a1KtA?pwd=fsqn)
 - **Extraction Code**: `fsqn`
 
 
